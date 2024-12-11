@@ -30,6 +30,7 @@ export const CustomerPage = () => {
     username: '',
     address: '',
     postalCode: '',
+    city: '',
     country: '',
   };
 

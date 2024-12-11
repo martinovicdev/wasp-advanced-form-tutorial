@@ -34,6 +34,7 @@ export const CustomerForm = ({ customer }: { customer: Customer }) => {
     username: z.string().min(1, { message: 'Username is required' }),
     address: z.string().min(1, { message: 'Address is required' }),
     postalCode: z.string().min(1, { message: 'Postal code is required' }),
+    city: z.string().min(1, { message: 'City is required' }),
     country: z.string().min(1, { message: 'Country is required' }),
   });
 
@@ -57,6 +58,7 @@ export const CustomerForm = ({ customer }: { customer: Customer }) => {
           username: values.username,
           address: values.address,
           postalCode: values.postalCode,
+          city: values.city,
           country: values.country,
         });
         toast({
@@ -77,6 +79,7 @@ export const CustomerForm = ({ customer }: { customer: Customer }) => {
           username: values.username,
           address: values.address,
           postalCode: values.postalCode,
+          city: values.city,
           country: values.country,
         });
         toast({
@@ -204,6 +207,19 @@ export const CustomerForm = ({ customer }: { customer: Customer }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Postal code</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="city"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>City</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>

@@ -18,6 +18,7 @@ export const createCustomer: CreateCustomer<CreateArgs, Customer> = async (
     username,
     address,
     postalCode,
+    city,
     country,
   },
   context
@@ -36,6 +37,7 @@ export const createCustomer: CreateCustomer<CreateArgs, Customer> = async (
       username,
       address,
       postalCode,
+      city,
       country,
     },
   });
