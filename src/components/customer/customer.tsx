@@ -18,6 +18,7 @@ import { useToast } from '../../hooks/use-toast';
 import { DatePicker } from '../../components/ui/date-picker';
 import Header from '../../components/layout/header';
 import { Customer } from 'wasp/entities';
+import { add } from 'date-fns';
 
 export const CustomerForm = ({ customer }: { customer: Customer }) => {
   const { toast } = useToast();
@@ -30,6 +31,10 @@ export const CustomerForm = ({ customer }: { customer: Customer }) => {
       message: 'Date of birth cannot be in the future',
     }),
     premiumUser: z.boolean(),
+    username: z.string().min(1, { message: 'Username is required' }),
+    address: z.string().min(1, { message: 'Address is required' }),
+    postalCode: z.string().min(1, { message: 'Postal code is required' }),
+    country: z.string().min(1, { message: 'Country is required' }),
   });
 
   type FormData = z.infer<typeof formSchema>;
@@ -49,6 +54,10 @@ export const CustomerForm = ({ customer }: { customer: Customer }) => {
           email: values.email,
           dateOfBirth: values.dateOfBirth,
           premiumUser: values.premiumUser,
+          username: values.username,
+          address: values.address,
+          postalCode: values.postalCode,
+          country: values.country,
         });
         toast({
           title: 'Success!',
@@ -65,6 +74,10 @@ export const CustomerForm = ({ customer }: { customer: Customer }) => {
           email: values.email,
           dateOfBirth: values.dateOfBirth,
           premiumUser: values.premiumUser,
+          username: values.username,
+          address: values.address,
+          postalCode: values.postalCode,
+          country: values.country,
         });
         toast({
           title: 'Success!',
@@ -87,7 +100,7 @@ export const CustomerForm = ({ customer }: { customer: Customer }) => {
           </h1>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className=" border border-border p-3 rounded-md space-y-8 mx-10 w-96"
+            className=" border border-border p-3 rounded-md space-y-8 mx-10 w-96 gap-5"
           >
             <FormField
               control={form.control}
@@ -159,7 +172,58 @@ export const CustomerForm = ({ customer }: { customer: Customer }) => {
                 </FormItem>
               )}
             />
-
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="address"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Address</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="postalCode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Postal code</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="country"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Country</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <Button type="submit">Submit</Button>
           </form>
         </Form>

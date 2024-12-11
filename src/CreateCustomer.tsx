@@ -27,6 +27,10 @@ export const CustomerPage = () => {
     email: '',
     dateOfBirth: new Date(),
     premiumUser: false,
+    username: '',
+    address: '',
+    postalCode: '',
+    country: '',
   };
 
   return <CustomerForm customer={defaultCustomer} />;
