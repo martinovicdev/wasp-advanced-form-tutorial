@@ -40,8 +40,6 @@ export const CustomerForm = ({ customer }: { customer: Customer }) => {
     })
     .superRefine((data, ctx) => {
       const ukPostcodeRegex = /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/i;
-
-      // Validate postal code format based on country
       if (data.country === 'UK' || data.country === 'United Kingdom') {
         if (!ukPostcodeRegex.test(data.postalCode)) {
           ctx.addIssue({
@@ -50,12 +48,6 @@ export const CustomerForm = ({ customer }: { customer: Customer }) => {
             path: ['postalCode'],
           });
         }
-      } else if (!/^\d+$/.test(data.postalCode)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Postal code must be numeric for non-UK addresses',
-          path: ['postalCode'],
-        });
       }
 
       if (data.username.includes(' ')) {
