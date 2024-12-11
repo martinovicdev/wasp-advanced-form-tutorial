@@ -23,21 +23,57 @@ import { add } from 'date-fns';
 export const CustomerForm = ({ customer }: { customer: Customer }) => {
   const { toast } = useToast();
 
-  const formSchema = z.object({
-    name: z.string().min(1, { message: 'Name is required' }),
-    surname: z.string().min(1, { message: 'Surname is required' }),
-    email: z.string().email({ message: 'Invalid email address' }),
-    dateOfBirth: z.date().max(new Date(), {
-      message: 'Date of birth cannot be in the future',
-    }),
-    premiumUser: z.boolean(),
-    username: z.string().min(1, { message: 'Username is required' }),
-    address: z.string().min(1, { message: 'Address is required' }),
-    postalCode: z.string().min(1, { message: 'Postal code is required' }),
-    city: z.string().min(1, { message: 'City is required' }),
-    country: z.string().min(1, { message: 'Country is required' }),
-  });
+  const formSchema = z
+    .object({
+      name: z.string().min(1, { message: 'Name is required' }),
+      surname: z.string().min(1, { message: 'Surname is required' }),
+      email: z.string().email({ message: 'Invalid email address' }),
+      dateOfBirth: z.date().max(new Date(), {
+        message: 'Date of birth cannot be in the future',
+      }),
+      premiumUser: z.boolean(),
+      username: z.string().min(1, { message: 'Username is required' }),
+      address: z.string().min(1, { message: 'Address is required' }),
+      postalCode: z.string().min(1, { message: 'Postal code is required' }),
+      city: z.string().min(1, { message: 'City is required' }),
+      country: z.string().min(1, { message: 'Country is required' }),
+    })
+    .superRefine((data, ctx) => {
+      const ukPostcodeRegex = /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/i;
 
+      // Validate postal code format based on country
+      if (data.country === 'UK' || data.country === 'United Kingdom') {
+        if (!ukPostcodeRegex.test(data.postalCode)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Invalid UK postal code format (e.g., SW1A 1AA)',
+            path: ['postalCode'],
+          });
+        }
+      } else if (!/^\d+$/.test(data.postalCode)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Postal code must be numeric for non-UK addresses',
+          path: ['postalCode'],
+        });
+      }
+
+      if (data.username.includes(' ')) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Username cannot contain spaces',
+          path: ['username'],
+        });
+      }
+
+      if (/^\d+$/.test(data.city)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'City name cannot be purely numeric',
+          path: ['city'],
+        });
+      }
+    });
   type FormData = z.infer<typeof formSchema>;
 
   const form = useForm<FormData>({
@@ -133,6 +169,19 @@ export const CustomerForm = ({ customer }: { customer: Customer }) => {
             />
             <FormField
               control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
@@ -177,10 +226,10 @@ export const CustomerForm = ({ customer }: { customer: Customer }) => {
             />
             <FormField
               control={form.control}
-              name="username"
+              name="country"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>Country</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -220,19 +269,6 @@ export const CustomerForm = ({ customer }: { customer: Customer }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>City</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="country"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Country</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
