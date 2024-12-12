@@ -21,4 +21,9 @@ model Customer {
   email String
   dateOfBirth DateTime
   premiumUser Boolean
+  username String 
+  address String 
+  postalCode String 
+  city String
+  country String  
 }

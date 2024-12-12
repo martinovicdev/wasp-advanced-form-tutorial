@@ -9,7 +9,18 @@ import {
 type CreateArgs = Omit<Customer, 'id'>;
 
 export const createCustomer: CreateCustomer<CreateArgs, Customer> = async (
-  { name, surname, email, dateOfBirth, premiumUser },
+  {
+    name,
+    surname,
+    email,
+    dateOfBirth,
+    premiumUser,
+    username,
+    address,
+    postalCode,
+    city,
+    country,
+  },
   context
 ) => {
   if (!context.user) {
@@ -23,12 +34,28 @@ export const createCustomer: CreateCustomer<CreateArgs, Customer> = async (
       email,
       dateOfBirth,
       premiumUser,
+      username,
+      address,
+      postalCode,
+      city,
+      country,
     },
   });
 };
 
 export const updateCustomer: UpdateCustomer<Customer> = async (
-  { id, name, surname, email, dateOfBirth, premiumUser },
+  {
+    id,
+    name,
+    surname,
+    email,
+    dateOfBirth,
+    premiumUser,
+    username,
+    address,
+    postalCode,
+    country,
+  },
   context
 ) => {
   if (!context.user) {
@@ -39,7 +66,17 @@ export const updateCustomer: UpdateCustomer<Customer> = async (
     where: {
       id,
     },
-    data: { name, surname, email, dateOfBirth, premiumUser },
+    data: {
+      name,
+      surname,
+      email,
+      dateOfBirth,
+      premiumUser,
+      username,
+      address,
+      postalCode,
+      country,
+    },
   });
 };
 
