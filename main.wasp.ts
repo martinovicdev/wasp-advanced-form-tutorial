@@ -52,6 +52,16 @@ app.query('getCustomer', {
   entities: ['Customer'],
 });
 
+app.query('getCustomersWithUsername', {
+  fn: { import: 'getCustomersWithUsername', from: '@src/customers/queries' },
+  entities: ['Customer'],
+});
+
+app.query('getCustomersWithEmail', {
+  fn: { import: 'getCustomersWithEmail', from: '@src/customers/queries' },
+  entities: ['Customer'],
+});
+
 app.action('createCustomer', {
   fn: { import: 'createCustomer', from: '@src/customers/actions' },
   entities: ['Customer'],

@@ -26,4 +26,5 @@ model Customer {
   postalCode String 
   city String
   country String  
+  @@unique([username, email])
 }

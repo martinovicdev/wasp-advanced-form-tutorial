@@ -54,6 +54,7 @@ function CustomerTable({ customers }: { customers: Customer[] }) {
           <TableHead>First name</TableHead>
           <TableHead>Last name</TableHead>
           <TableHead>Email</TableHead>
+          <TableHead>Username</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
@@ -63,6 +64,7 @@ function CustomerTable({ customers }: { customers: Customer[] }) {
             <TableCell>{customer.name}</TableCell>
             <TableCell>{customer.surname}</TableCell>
             <TableCell>{customer.email}</TableCell>
+            <TableCell>{customer.username}</TableCell>
             <TableCell className="flex gap-2">
               <Link to="/customer/:id" params={{ id: customer.id }}>
                 <Button>Edit</Button>
