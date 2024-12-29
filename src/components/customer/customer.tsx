@@ -12,7 +12,13 @@ import {
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Checkbox } from '../../components/ui/checkbox';
-import { createCustomer, updateCustomer } from 'wasp/client/operations';
+import {
+  createCustomer,
+  updateCustomer,
+  useQuery,
+  getCustomersWithUsername,
+  getCustomersWithEmail,
+} from 'wasp/client/operations';
 import { Toaster } from '../../components/ui/toaster';
 import { useToast } from '../../hooks/use-toast';
 import { DatePicker } from '../../components/ui/date-picker';
@@ -23,16 +29,47 @@ import { add } from 'date-fns';
 export const CustomerForm = ({ customer }: { customer: Customer }) => {
   const { toast } = useToast();
 
+  const checkUsername = async (value: string): Promise<boolean> => {
+    return getCustomersWithUsername({ username: value }).then((data) => {
+      return !!data;
+    });
+  };
+
+  const checkEmail = async (value: string): Promise<boolean> => {
+    return getCustomersWithEmail({ email: value }).then((data) => {
+      return !!data;
+    });
+  };
+
   const formSchema = z
     .object({
       name: z.string().min(1, { message: 'Name is required' }),
       surname: z.string().min(1, { message: 'Surname is required' }),
-      email: z.string().email({ message: 'Invalid email address' }),
+      email: z
+        .string()
+        .email({ message: 'Invalid email address' })
+        .refine(
+          async (email) => {
+            if (email !== customer.email && customer.email !== '') return true;
+            return !(await checkEmail(email));
+          },
+          { message: 'Email already exists' }
+        ),
       dateOfBirth: z.date().max(new Date(), {
         message: 'Date of birth cannot be in the future',
       }),
       premiumUser: z.boolean(),
-      username: z.string().min(1, { message: 'Username is required' }),
+      username: z
+        .string()
+        .min(1, { message: 'Username is required' })
+        .refine(
+          async (username) => {
+            if (username !== customer.username && customer.username !== '')
+              return true;
+            return !(await checkUsername(username));
+          },
+          { message: 'Username already exists' }
+        ),
       address: z.string().min(1, { message: 'Address is required' }),
       postalCode: z.string().min(1, { message: 'Postal code is required' }),
       city: z.string().min(1, { message: 'City is required' }),
@@ -74,6 +111,7 @@ export const CustomerForm = ({ customer }: { customer: Customer }) => {
   });
 
   async function onSubmit(values: FormData) {
+    console.log(checkUsername(values.username));
     if (customer.id) {
       try {
         await updateCustomer({
@@ -127,7 +165,9 @@ export const CustomerForm = ({ customer }: { customer: Customer }) => {
       <div className="flex flex-col gap-10 items-center">
         <Form {...form}>
           <h1 className="text-2xl font-semibold text-center">
-            Add new customer
+            {customer.id
+              ? `Edit ${customer.name} ${customer.surname}`
+              : 'Add new customer'}
           </h1>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
