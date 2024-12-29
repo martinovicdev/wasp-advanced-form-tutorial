@@ -50,7 +50,7 @@ export const CustomerForm = ({ customer }: { customer: Customer }) => {
         .email({ message: 'Invalid email address' })
         .refine(
           async (email) => {
-            if (email !== customer.email && customer.email !== '') return true;
+            if (email === customer.email && customer.email !== '') return true;
             return !(await checkEmail(email));
           },
           { message: 'Email already exists' }
@@ -64,7 +64,7 @@ export const CustomerForm = ({ customer }: { customer: Customer }) => {
         .min(1, { message: 'Username is required' })
         .refine(
           async (username) => {
-            if (username !== customer.username && customer.username !== '')
+            if (username === customer.username && customer.username !== '')
               return true;
             return !(await checkUsername(username));
           },
