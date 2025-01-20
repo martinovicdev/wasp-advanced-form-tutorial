@@ -41,6 +41,16 @@ export const CustomerForm = ({ customer }: { customer: Customer }) => {
     });
   };
 
+  const isValidUKPostcode = (postcode: string, country: string): boolean => {
+    if (
+      country.toUpperCase() !== 'UK' &&
+      country.toUpperCase() !== 'UNITED KINGDOM'
+    )
+      return true;
+    const ukPostcodeRegex = /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/i;
+    return ukPostcodeRegex.test(postcode);
+  };
+
   const formSchema = z
     .object({
       name: z.string().min(1, { message: 'Name is required' }),
@@ -76,15 +86,12 @@ export const CustomerForm = ({ customer }: { customer: Customer }) => {
       country: z.string().min(1, { message: 'Country is required' }),
     })
     .superRefine((data, ctx) => {
-      const ukPostcodeRegex = /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/i;
-      if (data.country === 'UK' || data.country === 'United Kingdom') {
-        if (!ukPostcodeRegex.test(data.postalCode)) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'Invalid UK postal code format (e.g., SW1A 1AA)',
-            path: ['postalCode'],
-          });
-        }
+      if (!isValidUKPostcode(data.postalCode, data.country)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Invalid UK postal code format (e.g., SW1A 1AA)',
+          path: ['postalCode'],
+        });
       }
 
       if (data.username.includes(' ')) {
