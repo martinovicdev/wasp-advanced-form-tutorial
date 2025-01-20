@@ -111,7 +111,6 @@ export const CustomerForm = ({ customer }: { customer: Customer }) => {
   });
 
   async function onSubmit(values: FormData) {
-    console.log(checkUsername(values.username));
     if (customer.id) {
       try {
         await updateCustomer({
@@ -132,7 +131,11 @@ export const CustomerForm = ({ customer }: { customer: Customer }) => {
           description: 'Customer updated successfully',
         });
       } catch (err: any) {
-        window.alert('Error: ' + err?.message);
+        toast({
+          title: 'Error',
+          description: err?.message,
+          variant: 'destructive',
+        });
       }
     } else {
       try {
@@ -154,7 +157,11 @@ export const CustomerForm = ({ customer }: { customer: Customer }) => {
         });
         form.reset();
       } catch (err: any) {
-        window.alert('Error: ' + err?.message);
+        toast({
+          title: 'Error',
+          description: err?.message,
+          variant: 'destructive',
+        });
       }
     }
   }
